@@ -21,7 +21,7 @@ func initConfig() Config {
 
 	return Config{
 		Host:       getEnv("HOST", "http://localhost"),
-		Port:       getEnv("PORT", "8080"),
+		Port:       getEnv("PORT", "5432"),
 		DBUser:     getEnv("DB_USER", "root"),
 		DBPassword: getEnv("DB_PASSWORD", "mypass"),
 		DBName:     getEnv("DB_NAME", "ecom"),
