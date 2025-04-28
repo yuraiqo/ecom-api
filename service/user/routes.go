@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/yuraiqo/ecom/service/auth"
 	"github.com/yuraiqo/ecom/types"
 	"github.com/yuraiqo/ecom/utils"
@@ -29,15 +30,24 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	// get JSON payload
 	var payload types.RegisterUserPayload
-	if err := utils.ParseJSON(r, payload); err != nil {
+	if err := utils.ParseJSON(r, &payload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// validate payload
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest,
+			fmt.Errorf("invalid payload of %v", errors))
+		return
 	}
 
 	// check if user exists
 	_, err := h.store.GetUserByEmail(payload.Email)
 	if err == nil {
 		utils.WriteError(w, http.StatusBadRequest,
-			fmt.Errorf("user with this email already exists", payload.Email))
+			fmt.Errorf("user with this email already exists %s", payload.Email))
 		return
 	}
 
