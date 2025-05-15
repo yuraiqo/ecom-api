@@ -19,9 +19,12 @@ func main() {
 		config.Envs.DBName,
 	)
 
-	_ = db.NewPostgreSQLStorage(connStr)
+	db, err := db.NewPostgreSQLStorage(connStr)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	server := api.NewAPIServer(":1234", nil)
+	server := api.NewAPIServer(":8080", db)
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
 	}

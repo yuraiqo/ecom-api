@@ -2,16 +2,12 @@ package db
 
 import (
 	"context"
-	"log"
 
 	"github.com/jackc/pgx/v5"
 )
 
-func NewPostgreSQLStorage(connStr string) *pgx.Conn {
+func NewPostgreSQLStorage(connStr string) (*pgx.Conn, error) {
 	db, err := pgx.Connect(context.Background(), connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	return db
+	return db, err
 }
